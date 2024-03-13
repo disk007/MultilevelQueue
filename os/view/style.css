@@ -1,0 +1,37 @@
+body {
+    background-color: rgb(44, 46, 46);
+    margin-right: 1rem;
+    margin-left: 1rem;
+}
+
+.button-container {
+    display: flex;
+    justify-content: flex-end;
+    margin: 4px 4px 4px 0px;
+}
+
+.container-2 {
+    margin: 4px 4px 4px 0px;
+
+}
+
+h2,
+h1,
+th,
+h4,
+p {
+    font-family: "Times New Roman", Times, serif;
+}
+
+h5 {
+    margin: 4px;
+    display: flex;
+    justify-content: flex-start;
+    margin: 4px 4px 4px 0px;
+    margin-left: 1rem;
+    font-family: "Times New Roman", Times, serif;
+    color: rgb(5, 56, 97);
+}
+/* .container-xl{
+    margin: 0px 3px 3px 45px;
+} */

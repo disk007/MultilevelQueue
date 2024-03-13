@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multilevel Queue</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div style="text-align: center;">
+        <h1 style="color: ivory;">Multilevel Queue</h1>
+    </div>
+    <div class="container-xxl mb-2">
+        <div class="card w-90">
+            <div class="card-header  ">
+                <h4 class="card-title" style="text-align: center;color: darkblue ;">JOB QUEUE</h4>
+            </div>
+            <div class="button-container">
+                <button type="button" class="btn btn-primary " id="add" style="margin-right: 1rem;"
+                    onclick="view.addProcess()" disabled>Add Process</button>
+                <button type="button" class="btn btn-success" id="start" style="margin-right: 1rem;"
+                    onclick="view.beginClock()">Start</button>
+                <button type="button" class="btn btn-warning text-white" id="end" style="margin-right: 1rem;" onclick="view.terminate()"
+                    disabled>End Task</button>
+                <button type="button" class="btn btn-danger" id="end" style="margin-right: 1rem;" onclick="confirm()"
+                    >Reset</button>
+            </div>
+            <table class="table table-bordered " id="tb">
+                <thead id="tHead">
+                    <tr>
+                        <th scope="col">PID</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Arrival Time</th>
+                        <th scope="col">Burst Time</th>
+                        <th scope="col">Waiting Time</th>
+                        <th scope="col">I/O Time</th>
+                        <th scope="col">Use Memory</th>
+                        <th scope="col">Queue</th>
+                    </tr>
+                </thead>
+            </table>
+            <div class="card-footer text-body-secondary">
+                <h5 id="clk">Clock: 0</h5>
+                <h5 id="avgWaitingTime"></h5>
+                <h5>Time quantum : 5</h5>
+                <h5 id="avgTurnaroundTime"></h5>
+                <h5 id="memory">Memory 0 %</h5>
+            </div>
+        </div>
+    </div>
+    </div>
+    <div class="container-xxl mb-2">
+        <div class="row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title" style="text-align: center;color: darkblue ;">ROUNDROBIN (QUEUE 1)</h4>
+                        <table class="table table-bordered" id="tbRrb">
+                            <thead id="tHeadRrb">
+                                <tr>
+                                    <th scope="col">PID</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Arrival Time</th>
+                                    <th scope="col">Burst Time</th>
+                                    <th scope="col">Waiting Time</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title" style="text-align: center; color: darkblue;">FCFS (QUEUE 2)</h4>
+                        <table class="table table-bordered" id="FCFS">
+                            <thead id="tHeadFCFS">
+                                <tr>
+                                    <th scope="col">PID</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Arrival Time</th>
+                                    <th scope="col">Burst Time</th>
+                                    <th scope="col">Waiting Time</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-xxl mb-2">
+        <div class="row">
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title" style="text-align: center; color: darkblue;">TERMINATE</h4>
+                        <table class="table table-bordered">
+                            <thead id="tHedTerminate">
+                                <tr>
+                                    <th scope="col">PID</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Burst tTime</th>
+                                    <th scope="col">Waiting time</th>
+                                    <th scope="col">I/O time</th>
+                                    <th scope="col">Turnaround time</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-6 mb-3 mb-sm-0">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title" style="text-align: center; color: darkblue;">CPU</h4>
+                        <table class="table table-bordered">
+                            <thead id="tHedCPU">
+                                <tr>
+                                    <th scope="col">PID</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Queue</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-xxl mb-2">
+        <div class="d-flex justify-content-evenly">
+            <div class="card w-50 ">
+                <div class="card-body">
+                    <h4 class="card-title" style="color:  darkblue ;text-align: center;">MONITOR</h4>
+                    <table class="table table-bordered">
+                        <thead id="thedMon">
+                            <tr>
+                                <th scope="col">PID</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">I/O Time</th>
+                                <th scope="col">Queue</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="card-footer text-body-secondary">
+                    <div class="button-b">
+                        <button id="addMon" type="button" class="btn btn-success" onclick="view.addMonitor()" disabled>Add
+                            I/O</button>
+                        <button id="removeMon" type="button" class="btn btn-danger" onclick="view.removeMonitor()"
+                            disabled>End I/O</button>
+                    </div>
+                </div>
+            </div>&nbsp;
+            <div class="card w-50 ">
+                <div class="card-body">
+                    <h4 class="card-title" style="color:  darkblue ;text-align: center;">USB</h4>
+                    <table class="table table-bordered">
+                        <thead id="theadUsb">
+                            <tr>
+                                <th scope="col">PID</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">I/O Time</th>
+                                <th scope="col">Queue</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="card-footer text-body-secondary">
+                    <div class="button-b">
+                        <button type="button" id="addUsb" class="btn btn-success" onclick="view.addUsb()" disabled>Add I/O</button>
+                        <button type="button" id="removeUsb" class="btn btn-danger" onclick="view.removeUsb()" disabled>End I/O</button>
+                    </div>
+                </div>
+            </div>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <div class="card w-50 ">
+                <div class="card-body">
+                    <h4 class="card-title" style="color:  darkblue ;text-align: center;">MONITOR QUEUE</h4>
+                    <table class="table table-bordered">
+                        <thead id="MonQueue">
+                            <tr>
+                                <th scope="col">PID</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Response Time</th>
+                                <th scope="col">Queue</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>&nbsp;
+            <div class="card w-50 ">
+                <div class="card-body">
+                    <h4 class="card-title" style="color:  darkblue ;text-align: center;">USB QUEUE</h4>
+                    <table class="table table-bordered">
+                        <thead id="UsbQ">
+                            <tr>
+                                <th scope="col">PID</th>
+                                <th scope="col">Status</th>
+                                <th scope="col">Response Time</th>
+                                <th scope="col">Queue</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function confirm() {
+            Swal.fire({
+                title: "คุณต้องการรีเฟรช?",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    view.reset();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+       
+<script type="module">
+import CloningController from "../controller/controller.js";
+class MultilevelQueueView {
+    constructor(controller) {
+        this.controller = controller;
+        this.intervalProcess = null;
+        this.timeQuantum = 5;
+        this.clock = 0;
+        this.intervalIdClk = null;
+        this.jobQueue = controller.jobQueue;
+        this.RRBQueue = controller.RRBQueue;
+        this.FCFSQueue = controller.FCFSQueue;
+        this.monitorQueue = controller.monitorQueue;
+        this.usbQueue = controller.usbQueue;
+        this.terminateQueue = controller.terminateQueue;
+    }
+
+    startProcess() {
+        this.intervalProcess = setInterval(() => { //เรียกใช้ทุกๆ 1 วินาที
+            this.showJobQueue();
+            this.showRRB();
+            this.showFCFS();
+            this.showTerminate();
+            this.showCPU();
+            this.showMonitor();
+            this.showMonitorQueue();
+            this.showUsb();
+            this.showUsbQueue();
+
+            this.controller.randomRunning();
+            this.controller.startWaitingTime();
+            this.controller.waitingTimeMonitorQueue();
+            this.controller.monitor();
+            this.controller.waitingTimeUsbQueue();
+            this.controller.usb();
+            this.avgWaitingTime();
+            this.AvgTurnaroundTime();
+        }, 1000);
+    }
+
+    stopClock() {
+        clearInterval(this.intervalIdClk);
+    }
+
+    beginClock() {
+        let start = document.getElementById("start");
+        let add = document.getElementById("add");
+        add.disabled = false;
+        start.disabled = true;
+        this.intervalIdClk = setInterval(() => {
+            this.clock++;
+            document.getElementById('clk').textContent = "Clock: " + this.clock;
+        }, 1000);
+    }
+    reset(){
+        location.reload();
+    }
+    stopProcess() {
+        clearInterval(this.intervalProcess);
+    }
+
+    showJobQueue() {
+        let addMon = document.getElementById("addMon");
+        let addUsb = document.getElementById("addUsb");
+        let end = document.getElementById("end");
+        let lengthRunning = this.jobQueue.filter(item => item.status === "Running");
+        if(this.jobQueue.length == 0 || lengthRunning.length == 0){
+            end.disabled = true;  
+        }
+        let trJobQueue = document.querySelectorAll(".trJobQueue");
+        trJobQueue.forEach((tr) => { // ลบ <tr> ที่ไม่มีข้อมูลใน jobQueue
+            let processID = tr.querySelector('th').id.split('-')[1]; // ดึงเอาค่า processID จาก tag th
+            console.log("p ",processID);
+            if (processID) {
+            let existingData = this.jobQueue.find((item) => item.processID === processID);// หาprocessID ที่ตรงกัน
+            if (!existingData) {//ถ้าprocessID ไม่ตรงให้ลบ
+                tr.remove(); // 
+                addMon.disabled = true; //disabled btn
+                addUsb.disabled = true;
+            }
+            }
+        });
+        let tHead = document.getElementById("tHead");
+        this.jobQueue.forEach(function (item, index) { // showJobQueue
+            // ตรวจสอบว่าข้อมูลที่จะเพิ่มมีอยู่แล้วหรือไม่โดยใช้ id
+            let existingRow = document.getElementById(`pId-${item.processID}`);
+            console.log("pid "+item.processID);
+            if (!existingRow) { // ถ้ายังไม่มีแถวที่มี id เดียวกันอยู่แล้ว
+            let insert_tHead = `<tr class="trJobQueue"> 
+                <th id="pId-${item.processID}" scope="col">${item.processID}</th>
+                <th id="status-${item.processID}" scope="col">${item.status}</th>
+                <th id="arrival-${item.processID}" scope="col">${item.arrivalTime}</th>
+                <th id="burstTime-${item.processID}" scope="col">${item.burstTime}</th>
+                <th id="wait-${item.processID}" scope="col">${item.waitingTime}</th>
+                <th id="IOtime-${item.processID}" scope="col">${item.ioTime}</th>
+                <th id="userMemory-${item.processID}" scope="col">${item.useMemory} KB</th>
+                <th id="Queue-${item.processID}" scope="col">${item.selectQueue}</th>
+            </tr>`;
+            tHead.insertAdjacentHTML("beforeend", insert_tHead);
+            }
+            if(item.status == "Ready"){ 
+                document.getElementById(`status-${item.processID}`).innerText = 'Ready'; //เปลี่ยนแปลงข้อความเป็น Ready
+                document.getElementById(`status-${item.processID}`).style.backgroundColor = "yellow";
+            }
+            else if(item.status == "Running"){
+                end.disabled = false;
+                // addMon.disabled = false;
+                document.getElementById(`status-${item.processID}`).innerText = 'Running'; //เปลี่ยนแปลงข้อความเป็น Running
+                document.getElementById(`status-${item.processID}`).style.backgroundColor = "green";
+            }
+            else if(item.status == "Waiting"){
+                document.getElementById(`status-${item.processID}`).innerText = 'Waiting'; //เปลี่ยนแปลงข้อความเป็น Waiting
+                document.getElementById(`status-${item.processID}`).style.backgroundColor = "orange";
+            }
+            //เปลี่ยนปลงตามข้อความตาม ตัวแปร
+            document.getElementById(`burstTime-${item.processID}`).textContent = item.burstTime; 
+            document.getElementById(`wait-${item.processID}`).textContent = item.waitingTime;
+            document.getElementById(`IOtime-${item.processID}`).textContent = item.ioTime;
+            addMon.disabled = true;
+            addUsb.disabled = true;
+        });
+        if(lengthRunning.length == 1 ){ //ถ้ามี status Running ให้เปิดใช้งาน add IO
+            addMon.disabled = false;
+            addUsb.disabled = false;
+        }
+    }
+
+    showRRB() { // แสดง RRB
+        let tHeadRrb = document.getElementById("tHeadRrb");
+        this.RRBQueue.forEach(function (item, index) {
+            let existingRow = document.getElementById(`RpId-${item.processID}`);
+            let trRRB = document.querySelectorAll(".trRRB");
+            if (item.status === "New" || item.status === "Ready") { //show status New and status Ready only
+                if (!existingRow) {
+                    let insert_tHead = `<tr class="trRRB">
+                        <th id="RpId-${item.processID}" scope="col">${item.processID}</th>
+                        <th id="Rstatus-${item.processID}" scope="col" style="background-color: yellow;">${item.status}</th>
+                        <th id="Rarrival-${item.processID}" scope="col">${item.arrivalTime}</th>
+                        <th id="RburstTime-${item.processID}" scope="col">${item.burstTime}</th>
+                        <th id="Rwait-${item.processID}" scope="col">${item.waitingTime}</th>
+                    </tr>`;
+                    tHeadRrb.insertAdjacentHTML("beforeend", insert_tHead);
+                }
+            }
+            if (item.status === "Ready") {
+                document.getElementById(`Rstatus-${item.processID}`).innerText = 'Ready';
+                document.getElementById(`Rwait-${item.processID}`).textContent = item.waitingTime;
+                document.getElementById(`RburstTime-${item.processID}`).textContent = item.burstTime;
+               
+
+            } else if (trRRB[index] && item.status === "Running") {
+                trRRB[index].remove();
+            }
+        });
+    }
+
+    showFCFS() { //show FCFS
+        let tHeadFCFS = document.getElementById("tHeadFCFS");
+        this.FCFSQueue.forEach(function (item, index) { 
+            let existingRow = document.getElementById(`FpId-${item.processID}`);
+            let trFCFS = document.querySelectorAll(".trFCFS");
+            if (item.status === "New" || item.status === "Ready") { //show status New and status Ready only
+                if (!existingRow) {
+                    let insert_tHead = `<tr class="trFCFS">
+                        <th id="FpId-${item.processID}" scope="col">${item.processID}</th>
+                        <th id="Fstatus-${item.processID}" scope="col" style="background-color: yellow;">${item.status}</th>
+                        <th id="Farrival-${item.processID}" scope="col">${item.arrivalTime}</th>
+                        <th id="FburstTime-${item.processID}" scope="col">${item.burstTime}</th>
+                        <th id="Fwait-${item.processID}" scope="col">${item.waitingTime}</th>
+                    </tr>`;
+                    tHeadFCFS.insertAdjacentHTML("beforeend", insert_tHead);
+                }
+            }
+            if (item.status === "Ready") {
+                document.getElementById(`Fstatus-${item.processID}`).innerText = 'Ready';
+                document.getElementById(`Fwait-${item.processID}`).textContent = item.waitingTime;
+                document.getElementById(`FburstTime-${item.processID}`).textContent = item.burstTime;
+               
+
+            } else if (trFCFS[index] && item.status === "Running") {
+                trFCFS[index].remove();
+            }
+        });
+    }
+
+    showCPU() { // show jobQueue Running 
+        let trCPU = document.querySelectorAll(".trCPU");
+        trCPU.forEach((tr) => {
+            let processID = tr.querySelector('th').id.split('-')[1];
+            if (processID) {
+                let existingData = this.jobQueue.find((item) => item.processID === processID);
+                if (!existingData) {
+                    tr.remove(); // ลบ <tr> ที่ไม่มีข้อมูลใน jobQueue
+                }
+            }
+        })
+        let tHedCPU = document.getElementById("tHedCPU");
+        this.jobQueue.forEach(function (item, index) {
+            let trCPU = document.querySelectorAll(".trCPU");
+            let existingRow = document.getElementById(`CpId-${item.processID}`);
+            if(item.status === "Running") {
+            if (!existingRow) {
+                let insert_tHead = `<tr class="trCPU" >
+                <th id="CpId-${item.processID}" scope="col">${item.processID}</th>
+                <th id="Cstatus-${item.processID}" scope="col" style="background-color: green;">${item.status}</th>
+                <th id="CQueue-${item.processID}" scope="col">${item.selectQueue}</th>
+                </tr>`;
+                tHedCPU.insertAdjacentHTML("beforeend", insert_tHead);
+            }
+            
+            }
+            else if (trCPU[index] && item.status === "Ready" || trCPU[index] && item.status === "Waiting") {
+            trCPU[index].remove();
+            }
+        })
+    }
+
+    showMonitor() { // แสดงตัวที่ทำงาน monitor
+        let lengthWaiting = this.monitorQueue.filter(item => item.status === "Waiting");
+        let thedMon = document.getElementById("thedMon");
+        let removeMon = document.getElementById("removeMon");
+            let trMon = document.querySelectorAll(".trMon");
+            if (lengthWaiting.length > 0) {
+                let existingRow = document.getElementById(`MpId-${this.monitorQueue[0].processID}`);
+                if (!existingRow) {
+                let insert_tHead = `<tr class="trMon">
+                    <th id="MpId-${this.monitorQueue[0].processID}" scope="col">${this.monitorQueue[0].processID}</th>
+                    <th id="Mstatus-${this.monitorQueue[0].processID}" scope="col"style="background-color: orange;">${this.monitorQueue[0].status}</th>
+                    <th id="MIoTime-${this.monitorQueue[0].processID}" scope="col">${this.monitorQueue[0].ioTime}</th>
+                    <th id="MQueue-${this.monitorQueue[0].processID}" scope="col">${this.monitorQueue[0].selectQueue}</th>
+                    </tr>`;
+                    thedMon.insertAdjacentHTML("beforeend", insert_tHead);
+                }
+                document.getElementById(`MIoTime-${this.monitorQueue[0].processID}`).textContent = this.monitorQueue[0].ioTime;
+
+            }
+            else if(trMon[0]){
+                trMon[0].remove();
+                removeMon.disabled = true;
+            }
+            if(trMon.length > 1){ //ลบ tr ที่ไม่มี monitorQueue
+                trMon[0].remove();
+                removeMon.disabled = true;
+            }
+        if(lengthWaiting.length >=1){
+            removeMon.disabled = false;
+        }
+    }
+
+    showMonitorQueue() { // แสดงตัวรอทำงาน monitor
+        let MonQueue = document.getElementById("MonQueue");
+        let existingRows = document.querySelectorAll(".trMonQueue");
+        // สร้าง set เพื่อเก็บ processID ของ items ใน monitorQueue
+        let processIDsInMonitorQueue = new Set(this.monitorQueue.slice(1).map(item => item.processID));
+        // วนลูปทุก existing row
+        existingRows.forEach(row => {
+            // ดึง processID ของแต่ละ existing row
+            let rowProcessID = row.querySelector('th').id.split('-')[1];
+            // ถ้า processID ของ existing row ไม่อยู่ใน set ที่เก็บ processID ของ monitorQueue
+            if (!processIDsInMonitorQueue.has(rowProcessID)) {
+            // ให้ลบ existing row ออก
+            row.remove();
+            }
+        });
+        // เพิ่มหรือปรับปรง rows สำหรับข้อมูลใน monitorQueue
+        this.monitorQueue.slice(1).forEach(item => {
+            let existingRow = document.getElementById(`MQpId-${item.processID}`);
+            if (!existingRow) {
+            let insert_tHead = `<tr class="trMonQueue">
+                <th id="MQpId-${item.processID}" scope="col">${item.processID}</th>
+                <th id="MQstatus-${item.processID}" scope="col" style="background-color: orange;">${item.status}</th>
+                <th id="MQwait-${item.processID}" scope="col">${item.waitIO}</th>
+                <th id="MQQueue-${item.processID}" scope="col">${item.selectQueue}</th>
+            </tr>`;
+            MonQueue.insertAdjacentHTML("beforeend", insert_tHead);
+            }
+            document.getElementById(`MQwait-${item.processID}`).textContent = item.waitIO;
+        });
+    }
+    showUsb() { // แสดงตัวที่ทำงาน Usb
+        let lengthWaiting = this.usbQueue.filter(item => item.status === "Waiting");
+        let theadUsb = document.getElementById("theadUsb");
+        let removeUsb = document.getElementById("removeUsb");
+            let trUsb = document.querySelectorAll(".trUsb");
+            if (lengthWaiting.length > 0) {
+                let existingRow = document.getElementById(`UpId-${this.usbQueue[0].processID}`);
+                if (!existingRow) {
+                let insert_tHead = `<tr class="trUsb">
+                    <th id="UpId-${this.usbQueue[0].processID}" scope="col">${this.usbQueue[0].processID}</th>
+                    <th id="Ustatus-${this.usbQueue[0].processID}" scope="col" style="background-color: orange;">${this.usbQueue[0].status}</th>
+                    <th id="UIoTime-${this.usbQueue[0].processID}" scope="col">${this.usbQueue[0].ioTime}</th>
+                    <th id="UQueue-${this.usbQueue[0].processID}" scope="col">${this.usbQueue[0].selectQueue}</th>
+                    </tr>`;
+                    theadUsb.insertAdjacentHTML("beforeend", insert_tHead);
+                }
+                document.getElementById(`UIoTime-${this.usbQueue[0].processID}`).textContent = this.usbQueue[0].ioTime;
+            }
+            else if(trUsb[0]){
+                trUsb[0].remove();
+                removeUsb.disabled = true;
+            }
+            if(trUsb.length > 1){
+                trUsb[0].remove();
+                removeUsb.disabled = true;
+            }
+        if(lengthWaiting.length >=1){
+            removeUsb.disabled = false;
+        }
+    }
+
+    showUsbQueue() { // แสดงตัวที่รอทำงาน usb
+        let UsbQ = document.getElementById("UsbQ");
+        let existingRows = document.querySelectorAll(".trUsbQueue");
+        // สร้าง set เพื่อเก็บ processID ของ items ใน monitorQueue
+        let processIDsInUsbQueue = new Set(this.usbQueue.slice(1).map(item => item.processID));
+        // วนลูปทุก existing row
+        existingRows.forEach(row => {
+            // ดึง processID ของแต่ละ existing row
+            let rowProcessID = row.querySelector('th').id.split('-')[1];
+            // ถ้า processID ของ existing row ไม่อยู่ใน set ที่เก็บ processID ของ monitorQueue
+            if (!processIDsInUsbQueue.has(rowProcessID)) {
+            // ให้ลบ existing row ออก
+            row.remove();
+            }
+        });
+        // เพิ่มหรือปรับปรง rows สำหรับข้อมูลใน monitorQueue
+        this.usbQueue.slice(1).forEach(item => {
+            let existingRow = document.getElementById(`UQpId-${item.processID}`);
+            if (!existingRow) {
+            let insert_tHead = `<tr class="trUsbQueue">
+                <th id="UQpId-${item.processID}" scope="col">${item.processID}</th>
+                <th id="UQstatus-${item.processID}" scope="col"style="background-color: orange;">${item.status}</th>
+                <th id="UQwait-${item.processID}" scope="col">${item.waitIO}</th>
+                <th id="UQQueue-${item.processID}" scope="col">${item.selectQueue}</th>
+            </tr>`;
+            UsbQ.insertAdjacentHTML("beforeend", insert_tHead);
+            }
+            document.getElementById(`UQwait-${item.processID}`).textContent = item.waitIO;
+        });
+    }
+
+    showTerminate() { // show terminal
+        let tHedTerminate = document.getElementById("tHedTerminate");
+        this.terminateQueue.forEach(function (item, index) {
+            let trTerminate = document.querySelectorAll(".trTerminate");
+            let existingRow = document.getElementById(`TpId-${index+1}`);
+            if(item.status === "Terminate") {
+                if (!existingRow) {
+                    let insert_tHead = `<tr class="trTerminate">
+                    <th id="TpId-${index+1}" scope="col">${index+1}</th>
+                    <th id="Tstatus-${index+1}" scope="col" style="background-color: red;">${item.status}</th>
+                    <th id="Tstatus-${index+1}" scope="col" >${item.burstTime}</th>
+                    <th id="Twait-${index+1}" scope="col">${item.waitingTime}</th>
+                    <th id="Twait-${index+1}" scope="col">${item.ioTime}</th>
+                    <th id="Tturnaround-${index+1}" scope="col">${item.turnaroundTime}</th>
+                    </tr>`;
+                    tHedTerminate.insertAdjacentHTML("beforeend", insert_tHead);
+                }
+            }
+        })
+    }
+
+    addProcess() { 
+        if(this.controller.checkMomory() < 100){
+            this.controller.addProcess(this.clock, this.timeQuantum); // ส่งค่า clock และ timeQuantum ไปให้ controller
+            let lengthProcess = this.jobQueue.length;
+            let memory = document.getElementById("memory");
+            memory.innerHTML = "Memory "+this.controller.checkMomory()+" %"; 
+        }
+        else{
+            Swal.fire({
+                icon: "Error",
+                title: "Memory เต็ม"
+            });
+        }
+    }
+    addMonitor() {
+        this.controller.addMonitorQueue(); // เรียกใช้งาน addMonitorQueue() มาจาก  class controller
+    }
+
+    removeMonitor() {
+        this.controller.RemoveMonitorQueue();
+    }
+    addUsb() {
+        this.controller.addUsbQueue();
+    }
+    removeUsb() {
+        this.controller.RemoveUsbQueue();
+    }
+    terminate() {
+        this.controller.removeQueue(this.clock);
+        let lengthProcess = this.jobQueue.length;
+        let memory = document.getElementById("memory");
+        memory.innerHTML = "Memory "+this.controller.checkMomory()+" %";
+    }
+    avgWaitingTime() {
+        let avgWaitingTime = document.getElementById("avgWaitingTime");
+        avgWaitingTime.innerHTML = "AVG Waiting Time: "+this.controller.getAvgWaitingTime(); //เปลี่ยนแปลงข้อความ ตาม getAvgWaitingTime()
+    }
+    AvgTurnaroundTime(){
+        let avgTimeElement = document.getElementById("avgTurnaroundTime");
+        avgTimeElement.innerHTML = "AVG Turnaround Time: "+this.controller.getAvgTurnaroundTime();
+    }
+    
+}
+const controller = new CloningController();
+const view = new MultilevelQueueView(controller);
+view.startProcess();
+window.view = view;
+</script>
